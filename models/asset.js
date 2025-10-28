@@ -40,7 +40,7 @@ const assetSchema = new mongoose.Schema(
         condition: {
             type: String,
             required: true,
-            enum: ["new", "used", "damaged", "retired"],
+            enum: ["new", "used", "damaged", "disposed"],
         },
         invoice: {
             type: mongoose.Schema.Types.ObjectId,
