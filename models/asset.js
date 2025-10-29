@@ -19,7 +19,7 @@ const assetSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true,
-            enum: ["laptop", "desktop", "monitor", "mouse", "keyboard", "mobile", "tablet", "other"],
+            enum: ["Laptop", "Desktop", "Monitor", "Mouse", "Keyboard", "Mobile", "Tablet", "Other"],
         },
         assetName: {
             type: String,
@@ -40,15 +40,20 @@ const assetSchema = new mongoose.Schema(
         condition: {
             type: String,
             required: true,
-            enum: ["new", "used", "damaged", "disposed"],
+            enum: ["New", "Used", "Damaged", "Disposed"],
         },
         invoice: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Invoice",
         },
-        ownership: {
+        owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+        },
+        actionType: {
+            type: String,
+            required: true,
+            enum: ["Assign", "Loan", "Return"],
         },
         comments: [commentSchema],
     },

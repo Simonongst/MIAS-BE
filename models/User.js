@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ["admin", "editor", "viewer"],
-        default: "associate",
+        enum: ["Admin", "Editor", "Viewer"],
+        default: "Viewer",
     },
     isEmployed: {
         type: Boolean,

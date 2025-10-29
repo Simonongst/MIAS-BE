@@ -10,11 +10,6 @@ const transactionSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
-        actionType: {
-            type: String,
-            required: true,
-            enum: ["assign", "loan", "return"],
-        },
         performedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
