@@ -5,12 +5,15 @@ const cors = require("cors");
 const logger = require("morgan");
 
 const connectDB = require("./db/db.js")
+const assetRouter = require('./routers/assetRoutes.js');
 
 connectDB();
 
 app.use(cors());
 app.use(express.json());
 app.use(logger("dev"));
+
+app.use('/assets', assetRouter);
 
 const PORT = process.env.PORT ? process.env.PORT : "3000";
 
