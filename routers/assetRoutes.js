@@ -8,5 +8,6 @@ router.post('/', createAsset);
 router.get('/', getAllAssets);
 router.get('/:assetId', getAssetById);
 router.put('/:assetId', updateAsset);
+router.delete('/:assetId', deleteAsset);
 
 module.exports = router;
