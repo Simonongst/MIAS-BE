@@ -53,7 +53,12 @@ const assetSchema = new mongoose.Schema(
         actionType: {
             type: String,
             required: true,
-            enum: ["Assign", "Loan", "Return"],
+            enum: ["Assigned", "Loaned", "Available"],
+        },
+        acknowledged: {
+            type: Boolean,
+            required: true,
+            default: false,
         },
         comments: [commentSchema],
     },
