@@ -19,4 +19,13 @@ const getAllAssets = async (req, res) => {
     }
 };
 
-module.exports = { createAsset, getAllAssets };
+const getAssetById = async (req, res) => {
+    try {
+        const asset = await Asset.findById(req.params.assetId);
+        res.status(200).json(asset);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createAsset, getAllAssets, getAssetById };
