@@ -4,6 +4,7 @@ const assetController = require("../controllers/assetController.js");
 
 const { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset } = assetController;
 
+// Assets route
 router.post('/', createAsset);
 router.get('/', getAllAssets);
 router.get('/:assetId', getAssetById);

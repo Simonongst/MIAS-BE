@@ -6,6 +6,7 @@ const logger = require("morgan");
 
 const connectDB = require("./db/db.js")
 const assetRouter = require('./routers/assetRoutes.js');
+const userRouter = require('./routers/userRoutes.js');
 
 connectDB();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(logger("dev"));
 
 app.use('/assets', assetRouter);
+app.use('/users', userRouter);
 
 const PORT = process.env.PORT ? process.env.PORT : "3000";
 
