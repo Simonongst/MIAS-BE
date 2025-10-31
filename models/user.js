@@ -10,10 +10,9 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique: true,
         trim: true,
     },
-    hashedPassword: {
+    password: {
         type: String,
         required: true,
     },
@@ -32,7 +31,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        delete returnedObject.hashedPassword;
+        delete returnedObject.password;
     }
 });
 
