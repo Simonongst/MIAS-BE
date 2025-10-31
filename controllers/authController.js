@@ -27,7 +27,7 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     try {
-        const userInDatabase = await User.findOne({ username: req.body.eid });
+        const userInDatabase = await User.findOne({ eid: req.body.eid });
         if(!userInDatabase) {
             return res.status(401).send("Sign-in failed. Invalid Enterprise ID or Password.");
         };
@@ -40,7 +40,7 @@ const signIn = async (req, res) => {
             return res.status(401).send("Login failed. Invalid Enterprise ID or Password.");
         };
 
-        const claims = { username: userInDatabase.username };
+        const claims = { eid: userInDatabase.eid };
 
         const access = jwt.sign(claims, process.env.ACCESS_SECRET, {
             expiresIn: "15m",
@@ -54,7 +54,7 @@ const signIn = async (req, res) => {
 
         res.status(200).json({ access, refresh });
     } catch (err) {
-        res.status(500).send({ err: err.message }).redirect('/');
+        res.status(500).send({ err: err.message });
     }
 };
 
