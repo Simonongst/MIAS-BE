@@ -28,4 +28,17 @@ const getInvoiceById = async (req, res) => {
     }
 };
 
-module.exports = { createInvoice, getAllInvoices, getInvoiceById };
+const updateInvoice = async (req, res) => {
+    try {
+        const updatedInvoice = await Invoice.findByIdAndUpdate(
+            req.params.invoiceId,
+            req.body,
+            { new: true }
+        );
+        res.status(200).json(updatedInvoice);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createInvoice, getAllInvoices, getInvoiceById, updateInvoice };
