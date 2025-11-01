@@ -8,6 +8,7 @@ const connectDB = require("./db/db.js")
 const authRouter = require("./routers/authRoutes.js")
 const assetRouter = require("./routers/assetRoutes.js");
 const userRouter = require("./routers/userRoutes.js");
+const verifyToken = require('./middleware/verifyToken.js');
 
 connectDB();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(logger("dev"));
 
 app.use('/auth', authRouter);
+app.use(verifyToken);
 app.use('/assets', assetRouter);
 app.use('/users', userRouter);
 
