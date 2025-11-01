@@ -39,7 +39,7 @@ const signIn = async (req, res) => {
             return res.status(401).send("Login failed. Invalid Enterprise ID or Password.");
         };
 
-        const claims = { _id: userInDatabase._id.toString(), eid: userInDatabase.eid };
+        const claims = { _id: userInDatabase._id.toString(), eid: userInDatabase.eid, role: userInDatabase.role };
 
         const access = jwt.sign(claims, process.env.ACCESS_SECRET, {
             expiresIn: "15m",

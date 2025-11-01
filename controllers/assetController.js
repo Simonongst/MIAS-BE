@@ -79,4 +79,29 @@ const getAssetComments = async (req, res) => {
     }
 };
 
-module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset, createComment, getAssetComments };
+const updateAssetComment = async (req, res) => {
+    try {
+        const asset = await Asset.findById(req.params.assetId);
+        if(!asset){
+            return res.status(404).send("Asset not found.");
+        };
+
+        const comment = asset.comments.id(req.params.commentId);
+        if(!comment){
+            return res.status(404).send("Comment not found.");
+        };
+
+        if(!["Admin", "Editor"].includes(req.user.role)){
+            return res.status(403).send("You do not have the permission to update comments")
+        };
+
+        comment.set(req.body);
+        await asset.save();
+
+        res.status(200).json(comment);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset, createComment, getAssetComments, updateAssetComment };
