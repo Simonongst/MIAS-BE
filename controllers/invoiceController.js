@@ -10,4 +10,13 @@ const createInvoice = async (req, res) => {
     }
 };
 
-module.exports = { createInvoice };
+const getAllInvoices = async (req, res) => {
+    try {
+        const invoices = await Invoice.find({});
+        res.status(200).json(invoices);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createInvoice, getAllInvoices };
