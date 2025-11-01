@@ -53,8 +53,17 @@ const signIn = async (req, res) => {
 
         res.status(200).json({ access, refresh });
     } catch (err) {
-        res.status(500).send({ err: err.message });
+        res.status(500).redirect("/");
     }
 };
 
-module.exports = { signUp, signIn };
+const signOut = async (req, res) => {
+    try {
+        console.log("sign-out request received");
+        res.status(200).json({ message: "Sign-out successful."})
+    } catch (err) {
+        res.status(500).send({ err: err.message })
+    }
+};
+
+module.exports = { signUp, signIn, signOut };
