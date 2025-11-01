@@ -50,4 +50,20 @@ const deleteAsset = async (req, res) => {
     }
 };
 
-module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset };
+const createComment = async (req, res) => {
+    try {
+        req.body.author = req.user._id;
+        const asset = await Asset.findById(req.params.assetId);
+        asset.comments.push(req.body);
+        await asset.save();
+
+        const newComment = asset.comments[asset.comments.length - 1];
+        newComment._doc.author = req.user;
+
+        res.status(201).json(newComment);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset, createComment};
