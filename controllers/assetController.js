@@ -66,4 +66,17 @@ const createComment = async (req, res) => {
     }
 };
 
-module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset, createComment};
+const getAssetComments = async (req, res) => {
+    try {
+        const asset = await Asset.findById(req.params.assetId);
+        if(!asset) {
+            return res.status(404).send("Asset not found.");
+        };
+
+        res.status(200).json(asset.comments);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+};
+
+module.exports = { createAsset, getAllAssets, getAssetById, updateAsset, deleteAsset, createComment, getAssetComments };
