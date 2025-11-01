@@ -8,6 +8,7 @@ const connectDB = require("./db/db.js")
 const authRouter = require("./routers/authRoutes.js")
 const assetRouter = require("./routers/assetRoutes.js");
 const userRouter = require("./routers/userRoutes.js");
+const invoiceRouter = require("./routers/invoiceRoutes.js");
 const verifyToken = require('./middleware/verifyToken.js');
 
 connectDB();
@@ -20,6 +21,7 @@ app.use('/auth', authRouter);
 app.use(verifyToken);
 app.use('/assets', assetRouter);
 app.use('/users', userRouter);
+app.use('/invoices', invoiceRouter);
 
 const PORT = process.env.PORT ? process.env.PORT : "3000";
 
