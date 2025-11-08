@@ -10,6 +10,7 @@ const assetRouter = require("./routers/assetRoutes.js");
 const userRouter = require("./routers/userRoutes.js");
 const invoiceRouter = require("./routers/invoiceRoutes.js");
 const transactionRouter = require("./routers/transactionRoutes.js");
+const associateRouter = require("./routers/associateRoutes.js");
 const verifyToken = require('./middleware/verifyToken.js');
 
 connectDB();
@@ -24,6 +25,7 @@ app.use('/assets', assetRouter);
 app.use('/users', userRouter);
 app.use('/invoices', invoiceRouter);
 app.use('/transactions', transactionRouter);
+app.use('/associates', associateRouter);
 
 const PORT = process.env.PORT ? process.env.PORT : "3000";
 
