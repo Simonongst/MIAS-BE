@@ -52,12 +52,14 @@ const assetSchema = new mongoose.Schema(
       enum: ['New', 'Used', 'Damaged', 'Disposed'],
     },
     invoice: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Invoice',
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: 'Invoice',
+      type: String,
     },
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: 'User',
+      type: String,
     },
     actionType: {
       type: String,
