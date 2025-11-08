@@ -20,7 +20,10 @@ const createAsset = async (req, res) => {
 
 const getAllAssets = async (req, res) => {
     try {
-        const assets = await Asset.find({});
+        const assets = await Asset.find({})
+        .populate("invoice")
+        .populate("owner", "eid username role");
+
         res.status(200).json(assets);
     } catch (err) {
         res.status(500).json({ err: err.message });
@@ -29,7 +32,10 @@ const getAllAssets = async (req, res) => {
 
 const getAssetById = async (req, res) => {
     try {
-        const asset = await Asset.findById(req.params.assetId);
+        const asset = await Asset.findById(req.params.assetId)
+        .populate("invoice")
+        .populate("owner", "eid username role");
+
         res.status(200).json(asset);
     } catch (err) {
         res.status(500).json({ err: err.message });
