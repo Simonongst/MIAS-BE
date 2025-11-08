@@ -1,9 +1,17 @@
 const Asset = require("../models/asset.js");
+const Transaction = require('../models/transaction.js');
 
 const createAsset = async (req, res) => {
     try {
         const newAsset = new Asset(req.body);
         const savedAsset = await newAsset.save();
+
+        await Transaction.create({
+            action: "CREATE",
+            asset: savedAsset._id,
+            performedBy: req.user._id
+        })
+
         res.status(201).json(savedAsset);
     } catch (err) {
         res.status(500).json({ error: err.message });

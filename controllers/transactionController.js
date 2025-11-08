@@ -4,7 +4,6 @@ const getAllTransactions = async (req, res) => {
     try {
         const transactions = await Transaction.find({})
         .populate("asset")
-        .populate("receivedBy", "eid role")
         .populate("performedBy", "eid role")
         .sort({ createdAt: -1 });
 
