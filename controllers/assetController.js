@@ -38,11 +38,32 @@ const getAssetById = async (req, res) => {
 
 const updateAsset = async (req, res) => {
     try {
+        const oldAsset = await Asset.findById(req.params.assetId);
+
         const updatedAsset = await Asset.findByIdAndUpdate(
             req.params.assetId,
             req.body,
             { new: true }
         );
+
+        const changes = {};
+
+        for (const key in req.body) {
+            if (oldAsset[key] !== updatedAsset[key]) {
+                changes[key] = {
+                    from: oldAsset[key],
+                    to: updatedAsset[key],
+                }
+            }
+        }
+
+        await Transaction.create({
+            action: "UPDATE",
+            asset: updatedAsset._id,
+            performedBy: req.user._id,
+            changes
+        })
+
         res.status(200).json(updatedAsset);
     } catch (err) {
         res.status(500).json({ err: err.message });
@@ -52,6 +73,13 @@ const updateAsset = async (req, res) => {
 const deleteAsset = async (req, res) => {
     try {
         const deletedAsset = await Asset.findByIdAndDelete(req.params.assetId);
+        
+        await Transaction.create({
+            action: "DELETE",
+            asset: req.params.assetId,
+            performedBy: req.user._id
+        })
+        
         res.status(200).json(deletedAsset);
     } catch (err) {
         res.status(500).json({ err: err.message });
@@ -66,6 +94,7 @@ const createComment = async (req, res) => {
         await asset.save();
 
         const newComment = asset.comments[asset.comments.length - 1];
+
         newComment._doc.author = req.user;
 
         res.status(201).json(newComment);
