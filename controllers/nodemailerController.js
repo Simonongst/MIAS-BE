@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer');
+const ReceiveAsset = require('../mailTemplates/ReceiveAsset');
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USERNAME,
     pass: process.env.EMAIL_PASSWORD,
@@ -10,20 +11,26 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (req, res) => {
   try {
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
-      to: 'syeongsn@gmail.com',
-      subject: 'Hello ✔',
-      text: 'Hello world?',
-      html: '<b>Hello world?</b>',
-    });
+    const { emailTemplate, recipient, data } = req.body;
 
-    console.log('Message sent:', info.messageId);
-    console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+    let template;
+    if (emailTemplate === 'ReceiveAsset') {
+      if (emailTemplate === 'ReceiveAsset') template = ReceiveAsset;
+    }
+
+    if (!template)
+      return res.status(400).json({ error: 'Unknown email template' });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USERNAME,
+      to: recipient,
+      subject: template.subject,
+      text: template.text(data),
+      html: template.html(data),
+    });
 
     res.status(200).json({
       message: 'Email sent',
-      preview: nodemailer.getTestMessageUrl(info),
     });
   } catch (error) {
     console.error('Unable to send email', error);
