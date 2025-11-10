@@ -24,7 +24,7 @@ const sendEmail = async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_USERNAME,
       to: recipient,
-      subject: template.subject,
+      subject: template.subject(data),
       text: template.text(data),
       html: template.html(data),
     });

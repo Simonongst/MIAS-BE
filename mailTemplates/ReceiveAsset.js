@@ -1,15 +1,13 @@
-const subject = '[Action Required] Acknowledge Receipt of Assets';
+const subject = (data) => {
+  return `[Action Required] IT Asset Transaction Acknowledgement - ${data.recipientName} (EID: ${data.eid})`;
+};
 
 const text = (data) => `
-Asset Assigned:
-
 Recipient: ${data.recipientName}
-Asset: ${data.assetName}
-Serial: ${data.serial}
+Asset Name: ${data.assetName}
+Serial No.: ${data.serial}
 Assigned By: ${data.assignedBy}
 Assigned At: ${data.assignedAt}
-
-Acknowledge here: ${data.ackUrl}
 `;
 
 const html = (data) => `
@@ -25,15 +23,16 @@ const html = (data) => `
       <tr><td><strong>Assigned At:</strong></td><td>${data.assignedAt}</td></tr>
     </table>
 
-    <p style="margin-top: 20px;">Please acknowledge receipt by clicking below:</p>
+    <p style="margin-top: 20px;">Please acknowledge receipt in the portal:</p>
 
     <a href="${data.ackUrl}"
        style="display:inline-block; padding:10px 16px; background:#ff3a3a; color:white;
               text-decoration:none; border-radius:6px;">
-      Acknowledge Asset
+      Acknowledge Asset in MIAS
     </a>
 
     <p style="margin-top: 30px;">Thank you.</p>
+    <p style="margin-top: 15px;">If you are not the intended recipient, please notify the sender and delete this message.</p>
   </div>
 `;
 
