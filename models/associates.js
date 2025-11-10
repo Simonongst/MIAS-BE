@@ -4,6 +4,7 @@ const associateSchema = new mongoose.Schema(
   {
     eid: { type: String, required: true },
     name: { type: String, required: true },
+    email: { type: String, required: true },
     terminationDate: { type: Date, required: false },
   },
   { timestamps: true }
