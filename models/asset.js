@@ -65,9 +65,9 @@ const assetSchema = new mongoose.Schema(
       enum: ['Assigned', 'Loaned', 'Available'],
     },
     acknowledged: {
-      type: Boolean,
-      required: true,
-      default: false,
+      type: String,
+      enum: ['Pending', 'Yes', 'No'],
+      default: 'Pending',
     },
     comments: [commentSchema],
   },
