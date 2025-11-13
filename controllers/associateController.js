@@ -21,6 +21,19 @@ const createAssociate = async (req, res) => {
   }
 };
 
+const updateAssociate = async (req, res) => {
+  try {
+    const updatedAssociate = await Associate.findByIdAndUpdate(
+      req.params.associateId,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedAssociate);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const deleteAssociate = async (req, res) => {
   try {
     const deletedAssociate = await Associate.findByIdAndDelete(req.params.associateId);
@@ -31,4 +44,4 @@ const deleteAssociate = async (req, res) => {
   }
 };
 
-module.exports = { getAllAssociates, createAssociate, deleteAssociate };
+module.exports = { getAllAssociates, createAssociate, deleteAssociate, updateAssociate };
