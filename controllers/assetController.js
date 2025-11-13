@@ -1,13 +1,49 @@
 const Asset = require('../models/asset.js');
+const Associate = require('../models/associates');
+const Invoice = require('../models/invoice');
 const Transaction = require('../models/transaction.js');
 
 const createAsset = async (req, res) => {
   try {
-    const newAsset = new Asset(req.body);
+    const { owner, invoice, ...assetData } = req.body;
+
+    // Match owner with associate table
+    let ownerId = null;
+    if (owner) {
+      const associate = await Associate.findOne({
+        name: owner,
+      });
+
+      if (associate) {
+        ownerId = associate._id;
+      }
+    }
+
+    // Match invoice with invoice table
+    let invoiceId = null;
+    if (invoice) {
+      const invoiceDoc = await Invoice.findOne({
+        invoiceNumber: invoice,
+      });
+      if (invoiceDoc) {
+        invoiceId = invoiceDoc._id;
+      }
+    }
+
+    const newAsset = new Asset({
+        ...assetData,
+        owner: ownerId,
+        invoice: invoiceId,
+    });
+
     const savedAsset = await newAsset.save();
 
     console.log('newAsset', newAsset);
     console.log('savedAsset', savedAsset);
+
+    const populatedAsset = await Asset.findById(savedAsset._id)
+        .populate('invoice')
+        .populate('owner', 'eid name email');
 
     await Transaction.create({
       action: 'CREATE',
@@ -24,7 +60,7 @@ const createAsset = async (req, res) => {
       },
     });
 
-    res.status(201).json(savedAsset);
+    res.status(201).json(populatedAsset);
   } catch (err) {
     console.error('Asset creation error:', err);
     res.status(500).json({ error: err.message });
@@ -35,7 +71,8 @@ const getAllAssets = async (req, res) => {
   try {
     const assets = await Asset.find({})
       .populate('invoice')
-      .populate('owner', 'eid username role');
+      .populate('owner', 'eid name email');
+    console.log('Populated assets:', JSON.stringify(assets[0], null, 2));
 
     res.status(200).json(assets);
   } catch (err) {
@@ -47,7 +84,7 @@ const getAssetById = async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.assetId)
       .populate('invoice')
-      .populate('owner', 'eid username role');
+      .populate('owner', 'eid name email');
 
     res.status(200).json(asset);
   } catch (err) {
@@ -57,18 +94,48 @@ const getAssetById = async (req, res) => {
 
 const updateAsset = async (req, res) => {
   try {
+    const { owner, invoice, ...assetData } = req.body;
+    
     const oldAsset = await Asset.findById(req.params.assetId);
+    
+    const updateData = { ...assetData };
+    
+    // Match owner with associate table
+    if (owner) {
+      const associate = await Associate.findOne({
+        name: owner,
+      });
+      if (associate) {
+        updateData.owner = associate._id;
+      } else {
+        updateData.owner = null;
+      }
+    }
+    
+    // Match invoice with invoice table
+    if (invoice) {
+      const invoiceDoc = await Invoice.findOne({
+        invoiceNumber: invoice,
+      });
+      if (invoiceDoc) {
+        updateData.invoice = invoiceDoc._id;
+      } else {
+        updateData.invoice = null;
+      }
+    }
 
     const updatedAsset = await Asset.findByIdAndUpdate(
       req.params.assetId,
-      req.body,
+      updateData,
       { new: true }
-    );
+    )
+      .populate('invoice')
+      .populate('owner', 'eid name email');
 
     const changes = {};
 
-    for (const key in req.body) {
-      if (oldAsset[key] !== updatedAsset[key]) {
+    for (const key in updateData) {
+      if (String(oldAsset[key]) !== String(updatedAsset[key])) {
         changes[key] = {
           from: oldAsset[key],
           to: updatedAsset[key],
