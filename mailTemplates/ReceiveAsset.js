@@ -25,11 +25,12 @@ const html = (data) => `
 
     <p style="margin-top: 20px;">Please acknowledge receipt in the portal:</p>
 
-    <a href="${data.ackUrl}"
-       style="display:inline-block; padding:10px 16px; background:#ff3a3a; color:white;
-              text-decoration:none; border-radius:6px;">
-      Acknowledge Asset in MIAS
-    </a>
+    <p>Click below to confirm receipt:</p>
+    <p>
+      <a href="${data.approveUrl}" style="background:#28a745;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;">Approve</a>
+      <a href="${data.rejectUrl}" style="background:#dc3545;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;margin-left:10px;">Reject</a>
+    </p>
+    <p>These links will expire in 24 hours for security reasons.</p>
 
     <p style="margin-top: 30px;">Thank you.</p>
     <p style="margin-top: 15px;">If you are not the intended recipient, please notify the sender and delete this message.</p>

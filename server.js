@@ -12,6 +12,7 @@ const invoiceRouter = require("./routers/invoiceRoutes.js");
 const transactionRouter = require("./routers/transactionRoutes.js");
 const associateRouter = require("./routers/associateRoutes.js");
 const nodemailerRouter = require("./routers/nodemailerRoutes.js");
+const ackRouter = require('./routers/ackRoutes');
 const verifyToken = require('./middleware/verifyToken.js');
 
 connectDB();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(logger("dev"));
 
 app.use('/auth', authRouter);
+app.use('/acknowledgement', ackRouter);
 app.use(verifyToken);
 app.use('/assets', assetRouter);
 app.use('/users', userRouter);
