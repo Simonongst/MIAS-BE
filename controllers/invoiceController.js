@@ -1,44 +1,60 @@
-const Invoice = require("../models/invoice.js");
+const { findByIdAndDelete } = require('../models/asset.js');
+const Invoice = require('../models/invoice.js');
 
 const createInvoice = async (req, res) => {
-    try {
-        const newInvoice = new Invoice(req.body);
-        const savedInvoice = await newInvoice.save();
-        res.status(201).json(savedInvoice);
-    } catch (err) {
-        res.status(500).send({ err: err.message });
-    }
+  try {
+    const newInvoice = new Invoice(req.body);
+    const savedInvoice = await newInvoice.save();
+    res.status(201).json(savedInvoice);
+  } catch (err) {
+    res.status(500).send({ err: err.message });
+  }
 };
 
 const getAllInvoices = async (req, res) => {
-    try {
-        const invoices = await Invoice.find({});
-        res.status(200).json(invoices);
-    } catch (err) {
-        res.status(500).json({ err: err.message });
-    }
+  try {
+    const invoices = await Invoice.find({});
+    res.status(200).json(invoices);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+};
+
+const deleteInvoice = async (req, res) => {
+  try {
+    const deletedInvoice = await Invoice.findByIdAndDelete(req.params.invoiceId)
+    res.status(200).json(deletedInvoice);
+  } catch (err) {
+    res.status(500).send({ err: err.message });
+  }
 };
 
 const getInvoiceById = async (req, res) => {
-    try {
-        const invoice = await Invoice.findById(req.params.invoiceId);
-        res.status(200).json(invoice);
-    } catch (err) {
-        res.status(500).json({ err: err.message });
-    }
+  try {
+    const invoice = await Invoice.findById(req.params.invoiceId);
+    res.status(200).json(invoice);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
 };
 
 const updateInvoice = async (req, res) => {
-    try {
-        const updatedInvoice = await Invoice.findByIdAndUpdate(
-            req.params.invoiceId,
-            req.body,
-            { new: true }
-        );
-        res.status(200).json(updatedInvoice);
-    } catch (err) {
-        res.status(500).json({ err: err.message });
-    }
+  try {
+    const updatedInvoice = await Invoice.findByIdAndUpdate(
+      req.params.invoiceId,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedInvoice);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
 };
 
-module.exports = { createInvoice, getAllInvoices, getInvoiceById, updateInvoice };
+module.exports = {
+  createInvoice,
+  getAllInvoices,
+  getInvoiceById,
+  updateInvoice,
+  deleteInvoice
+};
