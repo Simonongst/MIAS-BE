@@ -29,7 +29,7 @@ app.use('/users', userRouter);
 app.use('/invoices', invoiceRouter);
 app.use('/transactions', transactionRouter);
 app.use('/associates', associateRouter);
-app.use('/mail', nodemailerRouter);
+app.use('/mails', nodemailerRouter);
 
 const PORT = process.env.PORT ? process.env.PORT : "3000";
 
