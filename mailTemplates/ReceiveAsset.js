@@ -5,7 +5,7 @@ const subject = (data) => {
 const text = (data) => `
 Recipient: ${data.recipientName}
 Asset Name: ${data.assetName}
-Serial No.: ${data.serial}
+Serial No.: ${data.serialNumber}
 Assigned By: ${data.assignedBy}
 Assigned At: ${data.assignedAt}
 `;
@@ -17,8 +17,8 @@ const html = (data) => `
     <p>You have been assigned the following asset by the IT Support Department:</p>
 
     <table style="margin-top: 10px;">
-      <tr><td><strong>Asset:</strong></td><td>${data.assetName}</td></tr>
-      <tr><td><strong>Serial:</strong></td><td>${data.serial}</td></tr>
+      <tr><td><strong>Asset Name:</strong></td><td>${data.assetName}</td></tr>
+      <tr><td><strong>Serial Number:</strong></td><td>${data.serialNumber}</td></tr>
       <tr><td><strong>Assigned By:</strong></td><td>${data.assignedBy}</td></tr>
       <tr><td><strong>Assigned At:</strong></td><td>${data.assignedAt}</td></tr>
     </table>
