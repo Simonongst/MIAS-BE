@@ -7,16 +7,19 @@ const transactionSchema = mongoose.Schema(
       required: true,
     },
     asset: {
-      type: String,
-      ref: 'Asset',
+      _id: mongoose.Schema.Types.ObjectId,
+      assetName: String,
+      serialNumber: String,
+      category: String,
     },
     performedBy: {
-      type: String,
-      ref: 'User',
+      _id: mongoose.Schema.Types.ObjectId,
+      name: String,
+      username: String,
     },
     changes: {
-        type: Object,
-    }
+      type: Object,
+    },
   },
   { timestamps: true }
 );

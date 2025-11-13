@@ -61,7 +61,7 @@ const assetSchema = new mongoose.Schema(
       // ref: 'User',
       type: String,
     },
-    actionType: {
+    status: {
       type: String,
       required: true,
       enum: ['Assigned', 'Loaned', 'Available'],
