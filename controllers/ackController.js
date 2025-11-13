@@ -10,11 +10,10 @@ const approveAck = async (req, res) => {
     if (decoded.serialNumber !== id)
       return res.status(403).send('Invalid token');
 
-    // Check if asset exists
+    // Find the asset to check current status
     const asset = await Asset.findOne({ serialNumber: id });
 
     if (!asset) {
-      console.log('Asset not found with serialNumber:', id);
       return res.status(404).send(`
         <!DOCTYPE html>
         <html>
@@ -27,11 +26,12 @@ const approveAck = async (req, res) => {
       `);
     }
 
-    // Check if user already acknowledged
-    const requestedStatus = action === 'approve';
-
-    if (asset.acknowledged !== null && asset.acknowledged !== undefined) {
+    const requestedStatus = action === 'approve' ? 'Yes' : 'No';
+    
+    // Check if already acknowledged (not Pending)
+    if (asset.acknowledged !== 'Pending') {
       if (asset.acknowledged === requestedStatus) {
+        // Already performed the same action
         return res.send(`
           <!DOCTYPE html>
           <html>
@@ -43,34 +43,34 @@ const approveAck = async (req, res) => {
           </html>
         `);
       } else {
+        // Trying to do opposite action
         return res.send(`
           <!DOCTYPE html>
           <html>
             <head><title>Action Not Allowed</title></head>
             <body>
               <h1>Cannot ${action === 'approve' ? 'Approve' : 'Reject'}</h1>
-              <p>This asset has already been ${asset.acknowledged ? 'approved' : 'rejected'}. You cannot change the acknowledgement status. For changes, please contact IT Support.</p>
+              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'approved' : 'rejected'}. You cannot change the acknowledgement status.</p>
             </body>
           </html>
         `);
       }
     }
 
+    // Update from Pending to Yes or No
     const result = await Asset.findOneAndUpdate(
       { serialNumber: id },
-      { acknowledged: action === 'approve' },
+      { acknowledged: requestedStatus },
       { new: true }
     );
 
-    if (!result) {
-      console.log('Asset not found with serialNumber:', id);
-      return res.status(404).json({ err: 'Asset not found' });
-    }
+    console.log('Updated acknowledged to:', result.acknowledged);
 
     res.redirect(
       `${process.env.BASE_URL}/acknowledgement/acknowledgement-status?success=${action}`
     );
   } catch (err) {
+    console.error('Error in approveAck:', err);
     res.status(500).json({ err: err.message });
   }
 };
