@@ -20,7 +20,7 @@ const approveAck = async (req, res) => {
           <head><title>Error</title></head>
           <body>
             <h1>Asset Not Found</h1>
-            <p>The asset you're trying to acknowledge doesn't exist.</p>
+            <p>The asset you're trying to acknowledge doesn't exist. Please contact IT Support.</p>
           </body>
         </html>
       `);
