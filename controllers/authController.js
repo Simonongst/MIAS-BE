@@ -1,8 +1,16 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-
+const nodemailer = require('nodemailer');
 const User = require('../models/user.js');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 const signUp = async (req, res) => {
   try {
@@ -92,4 +100,41 @@ const changePassword = async (req, res) => {
   res.json({ message: 'Password successfully updated.' });
 };
 
-module.exports = { signUp, signIn, signOut, changePassword };
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user)
+    return res.json({
+      message: 'If the account exists, an email will be sent to you.',
+    });
+
+  const token = jwt.sign({ userId: user._id }, process.env.RESET_SECRET, {
+    expiresIn: '15m',
+  });
+
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+  await transporter.sendMail({
+    to: user.email,
+    subject: 'Reset your password',
+    text: `Reset your password: ${resetUrl}`,
+  });
+
+  res.json({ message: 'Check your email for reset instructions.' });
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.RESET_SECRET);
+    const hashed = await bcrypt.hash(newPassword, 10);
+    const user = await User.findByIdAndUpdate(payload.userId, { password: hashed });
+    res.json({ message: "Password has been reset "});
+  } catch (err) {
+    res.status(400).json({ error: 'Invalid or expired token ' });
+  }
+};
+
+module.exports = { signUp, signIn, signOut, changePassword, forgotPassword, resetPassword };
