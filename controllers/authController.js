@@ -124,17 +124,29 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { token, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword)
+    return res.status(400).json({ error: 'Passwords do not match' });
 
   let payload;
   try {
     payload = jwt.verify(token, process.env.RESET_SECRET);
     const hashed = await bcrypt.hash(newPassword, 10);
-    const user = await User.findByIdAndUpdate(payload.userId, { password: hashed });
-    res.json({ message: "Password has been reset "});
+    const user = await User.findByIdAndUpdate(payload.userId, {
+      password: hashed,
+    });
+    res.json({ message: 'Password has been reset ' });
   } catch (err) {
     res.status(400).json({ error: 'Invalid or expired token ' });
   }
 };
 
-module.exports = { signUp, signIn, signOut, changePassword, forgotPassword, resetPassword };
+module.exports = {
+  signUp,
+  signIn,
+  signOut,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+};
