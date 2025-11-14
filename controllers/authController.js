@@ -77,7 +77,9 @@ const signOut = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  if (newPassword !== confirmPassword)
+    return res.status(400).json({ error: 'Passwords do not match' });
   const user = await User.findById(req.user._id);
 
   const ok = await bcrypt.compare(oldPassword, user.password);
