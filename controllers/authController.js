@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
 const User = require('../models/user.js');
+const ResetPassword = require('../mailTemplates/ResetPassword');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -117,7 +118,8 @@ const forgotPassword = async (req, res) => {
   await transporter.sendMail({
     to: user.email,
     subject: 'Reset your password',
-    text: `Reset your password: ${resetUrl}`,
+    text: ResetPassword.text(resetUrl),
+    html: ResetPassword.html(resetUrl)
   });
 
   res.json({ message: 'Check your email for reset instructions.' });
