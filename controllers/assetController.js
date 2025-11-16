@@ -7,13 +7,10 @@ const createAsset = async (req, res) => {
   try {
     const { owner, invoice, ...assetData } = req.body;
 
-    // Match owner with associate table
     let ownerId = null;
-    if (owner) {
-      const associate = await Associate.findOne({
-        name: owner,
-      });
 
+    if (owner) {
+      const associate = await Associate.findById(owner);
       if (associate) {
         ownerId = associate._id;
       }
@@ -22,9 +19,7 @@ const createAsset = async (req, res) => {
     // Match invoice with invoice table
     let invoiceId = null;
     if (invoice) {
-      const invoiceDoc = await Invoice.findOne({
-        invoiceNumber: invoice,
-      });
+      const invoiceDoc = await Invoice.findById(invoice);
       if (invoiceDoc) {
         invoiceId = invoiceDoc._id;
       }
