@@ -5,9 +5,9 @@ const Transaction = require('../models/transaction.js');
 
 const createAsset = async (req, res) => {
   try {
-    console.log("Received req.body:", req.body); // Add this line
+    console.log('Received req.body:', req.body); // Add this line
     const { owner, invoice, serialNumber, ...assetData } = req.body;
-    console.log("serialNumber extracted:", serialNumber); // Add this line
+    console.log('serialNumber extracted:', serialNumber); // Add this line
 
     if (serialNumber) {
       const serialNumberExists = await Asset.findOne({ serialNumber });
@@ -108,7 +108,9 @@ const updateAsset = async (req, res) => {
   try {
     const { owner, invoice, ...assetData } = req.body;
 
-    const oldAsset = await Asset.findById(req.params.assetId);
+    const oldAsset = await Asset.findById(req.params.assetId)
+      .populate('invoice')
+      .populate('owner', 'eid name email');
 
     const updateData = { ...assetData };
 
@@ -142,11 +144,27 @@ const updateAsset = async (req, res) => {
 
     const changes = {};
 
+    const getReadableValue = (key, value, asset) => {
+      if (!value) return 'None';
+      
+      if (key === 'owner' && asset.owner) {
+        return asset.owner.name || String(value);
+      }
+      if (key === 'invoice' && asset.invoice) {
+        return asset.invoice.invoiceNumber || String(value);
+      }
+      return String(value);
+    };
+
+    // Compare and track changes with readable values
     for (const key in updateData) {
-      if (String(oldAsset[key]) !== String(updatedAsset[key])) {
+      const oldValue = String(oldAsset[key]?._id || oldAsset[key]);
+      const newValue = String(updatedAsset[key]?._id || updatedAsset[key]);
+      
+      if (oldValue !== newValue) {
         changes[key] = {
-          from: oldAsset[key],
-          to: updatedAsset[key],
+          from: getReadableValue(key, oldAsset[key], oldAsset),
+          to: getReadableValue(key, updatedAsset[key], updatedAsset),
         };
       }
     }
