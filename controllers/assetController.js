@@ -112,11 +112,9 @@ const updateAsset = async (req, res) => {
 
     const updateData = { ...assetData };
 
-    // Match owner with associate table
+    // Match owner with associate table by ID
     if (owner) {
-      const associate = await Associate.findOne({
-        name: owner,
-      });
+      const associate = await Associate.findById(owner);
       if (associate) {
         updateData.owner = associate._id;
       } else {
@@ -124,11 +122,9 @@ const updateAsset = async (req, res) => {
       }
     }
 
-    // Match invoice with invoice table
+    // Match invoice with invoice table by ID
     if (invoice) {
-      const invoiceDoc = await Invoice.findOne({
-        invoiceNumber: invoice,
-      });
+      const invoiceDoc = await Invoice.findById(invoice);
       if (invoiceDoc) {
         updateData.invoice = invoiceDoc._id;
       } else {
