@@ -5,7 +5,19 @@ const Transaction = require('../models/transaction.js');
 
 const createAsset = async (req, res) => {
   try {
-    const { owner, invoice, ...assetData } = req.body;
+    console.log("Received req.body:", req.body); // Add this line
+    const { owner, invoice, serialNumber, ...assetData } = req.body;
+    console.log("serialNumber extracted:", serialNumber); // Add this line
+
+    if (serialNumber) {
+      const serialNumberExists = await Asset.findOne({ serialNumber });
+      if (serialNumberExists) {
+        return res.json({
+          success: false,
+          message: 'Serial Number already exists.',
+        });
+      }
+    }
 
     let ownerId = null;
 
@@ -26,9 +38,10 @@ const createAsset = async (req, res) => {
     }
 
     const newAsset = new Asset({
-        ...assetData,
-        owner: ownerId,
-        invoice: invoiceId,
+      ...assetData,
+      serialNumber,
+      owner: ownerId,
+      invoice: invoiceId,
     });
 
     const savedAsset = await newAsset.save();
@@ -37,8 +50,8 @@ const createAsset = async (req, res) => {
     console.log('savedAsset', savedAsset);
 
     const populatedAsset = await Asset.findById(savedAsset._id)
-        .populate('invoice')
-        .populate('owner', 'eid name email');
+      .populate('invoice')
+      .populate('owner', 'eid name email');
 
     await Transaction.create({
       action: 'CREATE',
@@ -55,10 +68,14 @@ const createAsset = async (req, res) => {
       },
     });
 
-    res.status(201).json(populatedAsset);
+    res.status(201).json({
+      success: true,
+      message: 'Asset successfully created.',
+      asset: populatedAsset,
+    });
   } catch (err) {
     console.error('Asset creation error:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -90,11 +107,11 @@ const getAssetById = async (req, res) => {
 const updateAsset = async (req, res) => {
   try {
     const { owner, invoice, ...assetData } = req.body;
-    
+
     const oldAsset = await Asset.findById(req.params.assetId);
-    
+
     const updateData = { ...assetData };
-    
+
     // Match owner with associate table
     if (owner) {
       const associate = await Associate.findOne({
@@ -106,7 +123,7 @@ const updateAsset = async (req, res) => {
         updateData.owner = null;
       }
     }
-    
+
     // Match invoice with invoice table
     if (invoice) {
       const invoiceDoc = await Invoice.findOne({
