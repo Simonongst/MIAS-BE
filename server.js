@@ -19,7 +19,7 @@ connectDB();
 
 app.use(cors({
     origin: [
-        'https://mias-be-production.up.railway.app/',
+        'https://mias-fe-clone-production.up.railway.app',
         'http://localhost:5173'
     ],
     credentials: true
