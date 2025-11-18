@@ -67,7 +67,7 @@ const assetSchema = new mongoose.Schema(
     acknowledged: {
       type: String,
       enum: ['Pending', 'Yes', 'No'],
-      default: 'Pending',
+      default: 'No',
     },
     comments: [commentSchema],
   },

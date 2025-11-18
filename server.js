@@ -17,7 +17,13 @@ const verifyToken = require('./middleware/verifyToken.js');
 
 connectDB();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://mias-be-production.up.railway.app/',
+        'http://localhost:5173'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 app.use(logger("dev"));
 
