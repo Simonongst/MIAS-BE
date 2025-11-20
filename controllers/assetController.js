@@ -119,11 +119,12 @@ const updateAsset = async (req, res) => {
     const updateData = { ...assetData };
 
     // Match owner with associate table by ID
-    if (owner) {
-      const associate = await Associate.findById(owner);
-      if (associate) {
-        updateData.owner = associate._id;
+    if (owner !== undefined) {
+      if (owner) {
+        const associate = await Associate.findById(owner);
+        updateData.owner = associate ? associate._id : null;
       } else {
+        // frontend sent null or empty string
         updateData.owner = null;
       }
     }
@@ -156,7 +157,7 @@ const updateAsset = async (req, res) => {
     for (const key in updateData) {
       const oldValue = String(oldAsset[key]?._id || oldAsset[key]);
       const newValue = String(updateData[key]?._id || updateData[key]);
-      
+
       if (oldValue !== newValue) {
         changes[key] = {
           from: getReadableValue(key, oldAsset[key], oldAsset),
@@ -164,7 +165,7 @@ const updateAsset = async (req, res) => {
         };
       }
     }
-        
+
     if (Object.keys(changes).length === 0) {
       return res.status(200).json(oldAsset);
     }
