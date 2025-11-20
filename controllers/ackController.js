@@ -27,7 +27,7 @@ const acceptAck = async (req, res) => {
       `);
     }
 
-    const requestedStatus = action === 'accept' ? 'Yes' : 'No';
+    const requestedStatus = action === 'accept' ? 'Accepted' : 'Rejected';
 
     // Check if already acknowledged (not Pending)
     if (asset.acknowledgement !== 'Pending') {
@@ -54,7 +54,7 @@ const acceptAck = async (req, res) => {
             <body>
               <h1>Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
               <p>This asset has already been ${
-                asset.acknowledgement === 'Yes' ? 'accepted' : 'rejected'
+                asset.acknowledgement === 'Accepted' ? 'accepted' : 'rejected'
               }. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
             </body>
           </html>
