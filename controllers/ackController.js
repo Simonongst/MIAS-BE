@@ -50,7 +50,7 @@ const acceptAck = async (req, res) => {
             <head><title>Action Not Allowed</title></head>
             <body>
               <h1>Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
-              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'accepeted' : 'rejected'}. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
+              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'accepted' : 'rejected'}. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
             </body>
           </html>
         `);
