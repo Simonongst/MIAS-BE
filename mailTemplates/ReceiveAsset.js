@@ -11,7 +11,7 @@ Serial No.: ${data.serialNumber}
 Assigned By: ${data.assignedBy}
 Assigned At: ${data.assignedAt}
 
-To Approve, click here: ${data.approveUrl}
+To Accept, click here: ${data.acceptUrl}
 To Reject, click here: ${data.rejectUrl}
 `;
 
@@ -30,7 +30,7 @@ const html = (data) => `
 
     <p>Click below to confirm receipt:</p>
     <p>
-      <a href="${data.approveUrl}" style="background:#28a745;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;">Approve</a>
+      <a href="${data.acceptUrl}" style="background:#28a745;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;">Accept</a>
       <a href="${data.rejectUrl}" style="background:#dc3545;color:white;padding:10px 15px;border-radius:5px;text-decoration:none;margin-left:10px;">Reject</a>
     </p>
     <p>These links will expire in 24 hours for security reasons.</p>

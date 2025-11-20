@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Asset = require('../models/asset');
 
-const approveAck = async (req, res) => {
+const acceptAck = async (req, res) => {
   try {
     const { action } = req.params;
     const { id, token } = req.query;
@@ -26,7 +26,7 @@ const approveAck = async (req, res) => {
       `);
     }
 
-    const requestedStatus = action === 'approve' ? 'Yes' : 'No';
+    const requestedStatus = action === 'accept' ? 'Yes' : 'No';
     
     // Check if already acknowledged (not Pending)
     if (asset.acknowledged !== 'Pending') {
@@ -37,8 +37,8 @@ const approveAck = async (req, res) => {
           <html>
             <head><title>Already Acknowledged</title></head>
             <body>
-              <h1>Already ${action === 'approve' ? 'Approved' : 'Rejected'}</h1>
-              <p>This asset has already been ${action === 'approve' ? 'approved' : 'rejected'}.</p>
+              <h1>Already ${action === 'accept' ? 'Accepted' : 'Rejected'}</h1>
+              <p>This asset has already been ${action === 'accept' ? 'accepted' : 'rejected'}.</p>
             </body>
           </html>
         `);
@@ -49,8 +49,8 @@ const approveAck = async (req, res) => {
           <html>
             <head><title>Action Not Allowed</title></head>
             <body>
-              <h1>Cannot ${action === 'approve' ? 'Approve' : 'Reject'}</h1>
-              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'approved' : 'rejected'}. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
+              <h1>Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
+              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'accepeted' : 'rejected'}. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
             </body>
           </html>
         `);
@@ -70,7 +70,7 @@ const approveAck = async (req, res) => {
       `${process.env.BASE_URL}/acknowledgement/acknowledgement-status?success=${action}`
     );
   } catch (err) {
-    console.error('Error in approveAck:', err);
+    console.error('Error in acceptAck:', err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -83,7 +83,7 @@ const ackResponse = (req, res) => {
       <head><title>Acknowledgement Status</title></head>
       <body>
         <h1>Acknowledgement ${
-          success === 'approve' ? 'Approved' : 'Rejected'
+          success === 'accept' ? 'Accepted' : 'Rejected'
         } Successfully!</h1>
         <p>You can close this window now.</p>
       </body>
@@ -91,4 +91,4 @@ const ackResponse = (req, res) => {
     `);
 };
 
-module.exports = { approveAck, ackResponse };
+module.exports = { acceptAck, ackResponse };

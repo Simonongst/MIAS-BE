@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const ackController = require('../controllers/ackController');
 
-const { approveAck, ackResponse } = ackController;
+const { acceptAck, ackResponse } = ackController;
 
 router.get('/acknowledgement-status', ackResponse);
-router.get('/:action', approveAck);
+router.get('/:action', acceptAck);
 
 module.exports = router;

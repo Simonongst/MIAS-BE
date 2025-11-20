@@ -64,10 +64,10 @@ const assetSchema = new mongoose.Schema(
       required: true,
       enum: ['Assigned', 'Loaned', 'Available'],
     },
-    acknowledged: {
+    acknowledgement: {
       type: String,
-      enum: ['Pending', 'Yes', 'No'],
-      default: 'No',
+      enum: ['Pending', 'Accepted', 'Rejected', 'Emailed'],
+      default: 'Pending',
     },
     comments: [commentSchema],
   },

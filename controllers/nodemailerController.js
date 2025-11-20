@@ -23,8 +23,8 @@ const sendEmail = async (req, res) => {
       return res.status(400).json({ error: 'Unknown email template' });
 
     // Generate signed tokens for each action button
-    const approveToken = jwt.sign(
-      { serialNumber: data.serialNumber, userId: data.userId, action: 'approve' },
+    const acceptToken = jwt.sign(
+      { serialNumber: data.serialNumber, userId: data.userId, action: 'accept' },
       process.env.ACCESS_SECRET,
       { expiresIn: '1d' }
     )
@@ -35,10 +35,10 @@ const sendEmail = async (req, res) => {
       { expiresIn: '1d' }
     )
 
-    const approveUrl = `${process.env.BASE_URL}/acknowledgement/approve?id=${data.serialNumber}&token=${encodeURIComponent(approveToken)}`;
+    const acceptUrl = `${process.env.BASE_URL}/acknowledgement/accept?id=${data.serialNumber}&token=${encodeURIComponent(acceptToken)}`;
     const rejectUrl = `${process.env.BASE_URL}/acknowledgement/reject?id=${data.serialNumber}&token=${encodeURIComponent(rejectToken)}`;
 
-    const html = template.html({ ...data, approveUrl, rejectUrl });
+    const html = template.html({ ...data, acceptUrl, rejectUrl });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USERNAME,
