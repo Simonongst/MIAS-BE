@@ -112,6 +112,10 @@ const updateAsset = async (req, res) => {
       .populate('invoice')
       .populate('owner', 'eid name email');
 
+    if (!oldAsset) {
+      return res.status(404).json({ error: 'Asset not found' });
+    }
+
     const updateData = { ...assetData };
 
     // Match owner with associate table by ID
@@ -134,19 +138,11 @@ const updateAsset = async (req, res) => {
       }
     }
 
-    const updatedAsset = await Asset.findByIdAndUpdate(
-      req.params.assetId,
-      updateData,
-      { new: true }
-    )
-      .populate('invoice')
-      .populate('owner', 'eid name email');
-
     const changes = {};
 
     const getReadableValue = (key, value, asset) => {
       if (!value) return 'None';
-      
+
       if (key === 'owner' && asset.owner) {
         return asset.owner.name || String(value);
       }
@@ -159,15 +155,27 @@ const updateAsset = async (req, res) => {
     // Compare and track changes with readable values
     for (const key in updateData) {
       const oldValue = String(oldAsset[key]?._id || oldAsset[key]);
-      const newValue = String(updatedAsset[key]?._id || updatedAsset[key]);
+      const newValue = String(updateData[key]?._id || updateData[key]); // Changed from updatedAsset to updateData
       
       if (oldValue !== newValue) {
         changes[key] = {
           from: getReadableValue(key, oldAsset[key], oldAsset),
-          to: getReadableValue(key, updatedAsset[key], updatedAsset),
+          to: getReadableValue(key, updateData[key], oldAsset), // Changed from updatedAsset to updateData
         };
       }
     }
+        
+    if (Object.keys(changes).length === 0) {
+      return res.status(200).json(oldAsset);
+    }
+
+    const updatedAsset = await Asset.findByIdAndUpdate(
+      req.params.assetId,
+      updateData,
+      { new: true }
+    )
+      .populate('invoice')
+      .populate('owner', 'eid name email');
 
     await Transaction.create({
       action: 'UPDATE',
