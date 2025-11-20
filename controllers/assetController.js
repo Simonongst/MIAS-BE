@@ -155,12 +155,12 @@ const updateAsset = async (req, res) => {
     // Compare and track changes with readable values
     for (const key in updateData) {
       const oldValue = String(oldAsset[key]?._id || oldAsset[key]);
-      const newValue = String(updateData[key]?._id || updateData[key]); // Changed from updatedAsset to updateData
+      const newValue = String(updateData[key]?._id || updateData[key]);
       
       if (oldValue !== newValue) {
         changes[key] = {
           from: getReadableValue(key, oldAsset[key], oldAsset),
-          to: getReadableValue(key, updateData[key], oldAsset), // Changed from updatedAsset to updateData
+          to: getReadableValue(key, updateData[key], oldAsset),
         };
       }
     }
