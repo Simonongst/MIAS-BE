@@ -12,6 +12,7 @@ const acceptAck = async (req, res) => {
 
     // Find the asset to check current status
     const asset = await Asset.findOne({ serialNumber: id });
+    console.log('Current acknowledged status:', asset?.acknowledged);
 
     if (!asset) {
       return res.status(404).send(`
@@ -27,7 +28,7 @@ const acceptAck = async (req, res) => {
     }
 
     const requestedStatus = action === 'accept' ? 'Yes' : 'No';
-    
+
     // Check if already acknowledged (not Pending)
     if (asset.acknowledged !== 'Pending') {
       if (asset.acknowledged === requestedStatus) {
@@ -38,7 +39,9 @@ const acceptAck = async (req, res) => {
             <head><title>Already Acknowledged</title></head>
             <body>
               <h1>Already ${action === 'accept' ? 'Accepted' : 'Rejected'}</h1>
-              <p>This asset has already been ${action === 'accept' ? 'accepted' : 'rejected'}.</p>
+              <p>This asset has already been ${
+                action === 'accept' ? 'accepted' : 'rejected'
+              }.</p>
             </body>
           </html>
         `);
@@ -50,7 +53,9 @@ const acceptAck = async (req, res) => {
             <head><title>Action Not Allowed</title></head>
             <body>
               <h1>Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
-              <p>This asset has already been ${asset.acknowledged === 'Yes' ? 'accepted' : 'rejected'}. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
+              <p>This asset has already been ${
+                asset.acknowledged === 'Yes' ? 'accepted' : 'rejected'
+              }. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
             </body>
           </html>
         `);
