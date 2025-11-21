@@ -26,7 +26,6 @@ const createAsset = async (req, res) => {
       }
     }
 
-    // Match invoice with invoice table
     let invoiceId = null;
     if (invoice) {
       const invoiceDoc = await Invoice.findById(invoice);
@@ -43,9 +42,6 @@ const createAsset = async (req, res) => {
     });
 
     const savedAsset = await newAsset.save();
-
-    console.log('newAsset', newAsset);
-    console.log('savedAsset', savedAsset);
 
     const populatedAsset = await Asset.findById(savedAsset._id)
       .populate('invoice')
@@ -104,7 +100,20 @@ const getAssetById = async (req, res) => {
 
 const updateAsset = async (req, res) => {
   try {
-    const { owner, invoice, ...assetData } = req.body;
+    const { owner, invoice, serialNumber, ...assetData } = req.body;
+
+    if (serialNumber) {
+      const serialNumberExists = await Asset.findOne({
+        serialNumber,
+        _id: { $ne: req.params.assetId },
+      });
+      if (serialNumberExists) {
+        return res.status(200).json({
+          success: false,
+          message: 'Serial Number already exists.',
+        });
+      }
+    }
 
     const oldAsset = await Asset.findById(req.params.assetId)
       .populate('invoice')
@@ -114,14 +123,16 @@ const updateAsset = async (req, res) => {
       return res.status(404).json({ error: 'Asset not found' });
     }
 
-
     if (oldAsset.owner !== owner) {
       assetData.acknowledgement = "Pending"
     }
 
     const updateData = { ...assetData };
 
-    // Match owner with associate table by ID
+    if (serialNumber) {
+      updateData.serialNumber = serialNumber;
+    }
+
     if (owner !== undefined) {
       if (owner) {
         const associate = await Associate.findById(owner);
@@ -131,11 +142,10 @@ const updateAsset = async (req, res) => {
       }
     }
 
-    // Match invoice with invoice table by ID
-    if (invoice) {
-      const invoiceDoc = await Invoice.findById(invoice);
-      if (invoiceDoc) {
-        updateData.invoice = invoiceDoc._id;
+    if (invoice !== undefined) {
+      if (invoice) {
+        const invoiceDoc = await Invoice.findById(invoice);
+        updateData.invoice = invoiceDoc ? invoiceDoc._id : null;
       } else {
         updateData.invoice = null;
       }
@@ -143,13 +153,11 @@ const updateAsset = async (req, res) => {
 
     const changes = {};
 
-    // Fetch new owner details for readable display
     let newOwner = null;
     if (updateData.owner) {
       newOwner = await Associate.findById(updateData.owner);
     }
 
-    // Fetch new invoice details for readable display
     let newInvoice = null;
     if (updateData.invoice) {
       newInvoice = await Invoice.findById(updateData.invoice);
@@ -167,7 +175,6 @@ const updateAsset = async (req, res) => {
       return String(value);
     };
 
-    // Compare and track changes with readable values
     for (const key in updateData) {
       const oldValue = String(oldAsset[key]?._id || oldAsset[key]);
       const newValue = String(updateData[key]?._id || updateData[key]);
@@ -213,9 +220,9 @@ const updateAsset = async (req, res) => {
       changes,
     });
 
-    res.status(200).json(updatedAsset);
+    res.status(200).json({ success: true, data: updatedAsset });
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
