@@ -124,7 +124,6 @@ const updateAsset = async (req, res) => {
         const associate = await Associate.findById(owner);
         updateData.owner = associate ? associate._id : null;
       } else {
-        // frontend sent null or empty string
         updateData.owner = null;
       }
     }
@@ -141,14 +140,26 @@ const updateAsset = async (req, res) => {
 
     const changes = {};
 
-    const getReadableValue = (key, value, asset) => {
+    // Fetch new owner details for readable display
+    let newOwner = null;
+    if (updateData.owner) {
+      newOwner = await Associate.findById(updateData.owner);
+    }
+
+    // Fetch new invoice details for readable display
+    let newInvoice = null;
+    if (updateData.invoice) {
+      newInvoice = await Invoice.findById(updateData.invoice);
+    }
+
+    const getReadableValue = (key, value, ownerDoc, invoiceDoc) => {
       if (!value) return 'None';
 
-      if (key === 'owner' && asset.owner) {
-        return asset.owner.name || String(value);
+      if (key === 'owner' && ownerDoc) {
+        return ownerDoc.name || String(value);
       }
-      if (key === 'invoice' && asset.invoice) {
-        return asset.invoice.invoiceNumber || String(value);
+      if (key === 'invoice' && invoiceDoc) {
+        return invoiceDoc.invoiceNumber || String(value);
       }
       return String(value);
     };
@@ -160,8 +171,13 @@ const updateAsset = async (req, res) => {
 
       if (oldValue !== newValue) {
         changes[key] = {
-          from: getReadableValue(key, oldAsset[key], oldAsset),
-          to: getReadableValue(key, updateData[key], oldAsset),
+          from: getReadableValue(
+            key,
+            oldAsset[key],
+            oldAsset.owner,
+            oldAsset.invoice
+          ),
+          to: getReadableValue(key, updateData[key], newOwner, newInvoice),
         };
       }
     }
