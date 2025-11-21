@@ -25,7 +25,7 @@ const createUser = async (req, res) => {
     if (userInDatabase) {
       return res.status(409).send('This Enterprise ID is already in use.');
     }
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     req.body.password = hashedPassword;
 
     const savedUser = await User.create(req.body);
@@ -39,12 +39,18 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    req.body.password = hashedPassword;
+
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       req.body,
       { new: true }
     );
-    res.status(200).json(updatedUser);
+
+    const { password, ...userWithoutPassword } = updatedUser.toObject();
+
+    res.status(200).json(userWithoutPassword);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
