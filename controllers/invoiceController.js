@@ -17,9 +17,12 @@ const createInvoice = async (req, res) => {
     const invoiceToSave = new Invoice({ invoiceNumber, ...newInvoice });
 
     const savedInvoice = await invoiceToSave.save();
-    res.status(201).json(savedInvoice);
+    res.status(201).json({ success: true, data: savedInvoice });
   } catch (err) {
-    res.status(500).send({ err: err.message });
+    res.status(500).send({ 
+      success: false,
+      error: err.message 
+    });
   }
 };
 
