@@ -30,7 +30,7 @@ const acceptAck = async (req, res) => {
     const requestedStatus = action === 'accept' ? 'Accepted' : 'Rejected';
 
     // Check if already acknowledged (not Pending)
-    if (asset.acknowledgement !== 'Pending') {
+    if (['Accepted', 'Rejected'].includes(asset.acknowledgement)) {
       if (asset.acknowledgement === requestedStatus) {
         // Already performed the same action
         return res.send(`
@@ -62,7 +62,7 @@ const acceptAck = async (req, res) => {
       }
     }
 
-    // Update from Pending to Yes or No
+    // Update from Pending/Emailed to Accepted or Rejected
     const result = await Asset.findOneAndUpdate(
       { serialNumber: id },
       { acknowledgement: requestedStatus },
