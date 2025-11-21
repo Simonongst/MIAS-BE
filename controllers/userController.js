@@ -21,7 +21,7 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { eid, ...newUser } = req.body;
+    const { eid, email, ...newUser } = req.body;
 
     if (eid) {
       const eidExists = await User.findOne({ eid });
@@ -32,7 +32,18 @@ const createUser = async (req, res) => {
         });
       }
     }
-    const userToSave = new User({ eid, ...newUser });
+
+    if (email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.json({
+          success: false,
+          message: 'Email already exists.',
+        });
+      }
+    }
+
+    const userToSave = new User({ eid, email, ...newUser });
 
     const hashedPassword = bcrypt.hashSync(userToSave.password, 10);
     userToSave.password = hashedPassword;
@@ -51,16 +62,53 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-    req.body.password = hashedPassword;
+    const { eid, email, password, ...rest } = req.body;
+
+    if (eid) {
+      const eidExists = await User.findOne({
+        eid,
+        _id: { $ne: req.params.userId },
+      });
+      if (eidExists) {
+        return res.json({
+          success: false,
+          message: 'EID already exists.',
+        });
+      }
+    }
+
+    if (email) {
+      const emailExists = await User.findOne({
+        email,
+        _id: { $ne: req.params.userId },
+      });
+      if (emailExists) {
+        return res.json({
+          success: false,
+          message: 'Email already exists.',
+        });
+      }
+    }
+
+    let hashedPassword;
+    if (password) {
+      hashedPassword = bcrypt.hashSync(password, 10);
+    }
+
+    const updatedPayload = {
+      ...rest,
+      ...(eid && { eid }),
+      ...(email && { email }),
+      ...(hashedPassword && { password: hashedPassword }),
+    };
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
-      req.body,
+      updatedPayload,
       { new: true }
     );
 
-    const { password, ...userWithoutPassword } = updatedUser.toObject();
+    const { password: _, ...userWithoutPassword } = updatedUser.toObject();
 
     res.status(200).json(userWithoutPassword);
   } catch (err) {
