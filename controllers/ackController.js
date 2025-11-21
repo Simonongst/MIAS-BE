@@ -18,10 +18,14 @@ const acceptAck = async (req, res) => {
       return res.status(404).send(`
         <!DOCTYPE html>
         <html>
-          <head><title>Error</title></head>
-          <body>
-            <h1>Asset Not Found</h1>
-            <p>The asset you're trying to acknowledge doesn't exist. Please contact IT Support.</p>
+          <head>
+            <title>Error</title>
+          </head>
+          <body style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background: #f9f9f9;">
+            <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+              <h1 style="color: #dc3545;">Asset Not Found</h1>
+              <p>The asset you're trying to acknowledge doesn't exist. Please contact IT Support.</p>
+            </div>
           </body>
         </html>
       `);
@@ -37,11 +41,13 @@ const acceptAck = async (req, res) => {
           <!DOCTYPE html>
           <html>
             <head><title>Already Acknowledged</title></head>
-            <body>
-              <h1>Already ${action === 'accept' ? 'Accepted' : 'Rejected'}</h1>
-              <p>This asset has already been ${
-                action === 'accept' ? 'accepted' : 'rejected'
-              }.</p>
+            <body style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background: #f9f9f9;">
+              <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                <h1 style="color: #ffc107;">Already ${action === 'accept' ? 'Accepted' : 'Rejected'}</h1>
+                <p>This asset has already been ${
+                  action === 'accept' ? 'accepted' : 'rejected'
+                }.</p>
+              </div>
             </body>
           </html>
         `);
@@ -51,11 +57,13 @@ const acceptAck = async (req, res) => {
           <!DOCTYPE html>
           <html>
             <head><title>Action Not Allowed</title></head>
-            <body>
-              <h1>Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
-              <p>This asset has already been ${
-                asset.acknowledgement === 'Accepted' ? 'accepted' : 'rejected'
-              }. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
+            <body style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background: #f9f9f9;">
+              <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                <h1 style="color: #dc3545;">Cannot ${action === 'accept' ? 'Accept' : 'Reject'}</h1>
+                <p>This asset has already been ${
+                  asset.acknowledgement === 'Accepted' ? 'accepted' : 'rejected'
+                }. You cannot change the acknowledgement status. Please approach the IT Support for any changes.</p>
+              </div>
             </body>
           </html>
         `);
