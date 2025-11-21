@@ -1,4 +1,5 @@
 const User = require('../models/user.js');
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -20,10 +21,17 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const newUser = new User(req.body);
-    const savedUser = await newUser.save();
+    const userInDatabase = await User.findOne({ eid: req.body.eid });
+    if (userInDatabase) {
+      return res.status(409).send('This Enterprise ID is already in use.');
+    }
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+    req.body.password = hashedPassword;
 
-    res.status(201).json(savedUser);
+    const savedUser = await User.create(req.body);
+    const { password, ...userWithoutPassword } = savedUser.toObject();
+
+    res.status(201).json(userWithoutPassword);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
