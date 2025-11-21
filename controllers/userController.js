@@ -40,9 +40,12 @@ const createUser = async (req, res) => {
     const savedUser = await User.create(userToSave);
     const { password, ...userWithoutPassword } = savedUser.toObject();
 
-    res.status(201).json(userWithoutPassword);
+    res.status(201).json({ success: true, data: userWithoutPassword });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };
 

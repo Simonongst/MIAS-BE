@@ -27,9 +27,12 @@ const createAssociate = async (req, res) => {
     const associateToSave = new Associate({ eid, ...newAssociate });
     const savedAssociate = await associateToSave.save();
 
-    res.status(201).json(savedAssociate);
+    res.status(201).json({ success: true, data: savedAssociate });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };
 
