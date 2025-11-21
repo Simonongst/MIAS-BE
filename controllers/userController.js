@@ -21,14 +21,23 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const userInDatabase = await User.findOne({ eid: req.body.eid });
-    if (userInDatabase) {
-      return res.status(409).send('This Enterprise ID is already in use.');
-    }
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-    req.body.password = hashedPassword;
+    const { eid, ...newUser } = req.body;
 
-    const savedUser = await User.create(req.body);
+    if (eid) {
+      const eidExists = await User.findOne({ eid });
+      if (eidExists) {
+        return res.json({
+          success: false,
+          message: 'EID already exists.',
+        });
+      }
+    }
+    const userToSave = new User({ eid, ...newUser });
+
+    const hashedPassword = bcrypt.hashSync(userToSave.password, 10);
+    userToSave.password = hashedPassword;
+
+    const savedUser = await User.create(userToSave);
     const { password, ...userWithoutPassword } = savedUser.toObject();
 
     res.status(201).json(userWithoutPassword);
