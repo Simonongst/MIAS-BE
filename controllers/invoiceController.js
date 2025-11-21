@@ -3,8 +3,20 @@ const Invoice = require('../models/invoice.js');
 
 const createInvoice = async (req, res) => {
   try {
-    const newInvoice = new Invoice(req.body);
-    const savedInvoice = await newInvoice.save();
+    const { invoiceNumber, ...newInvoice } = req.body;
+
+    if (invoiceNumber) {
+      const invoiceNumberExists = await Invoice.findOne({ invoiceNumber });
+      if (invoiceNumberExists) {
+        return res.json({
+          success: false,
+          message: 'Invoice Number already exists.',
+        });
+      }
+    }
+    const invoiceToSave = new Invoice({ eid, ...newInvoice });
+
+    const savedInvoice = await invoiceToSave.save();
     res.status(201).json(savedInvoice);
   } catch (err) {
     res.status(500).send({ err: err.message });
@@ -22,7 +34,9 @@ const getAllInvoices = async (req, res) => {
 
 const deleteInvoice = async (req, res) => {
   try {
-    const deletedInvoice = await Invoice.findByIdAndDelete(req.params.invoiceId)
+    const deletedInvoice = await Invoice.findByIdAndDelete(
+      req.params.invoiceId
+    );
     res.status(200).json(deletedInvoice);
   } catch (err) {
     res.status(500).send({ err: err.message });
@@ -56,5 +70,5 @@ module.exports = {
   getAllInvoices,
   getInvoiceById,
   updateInvoice,
-  deleteInvoice
+  deleteInvoice,
 };

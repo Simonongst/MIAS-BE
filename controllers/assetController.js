@@ -5,9 +5,7 @@ const Transaction = require('../models/transaction.js');
 
 const createAsset = async (req, res) => {
   try {
-    console.log('Received req.body:', req.body); // Add this line
     const { owner, invoice, serialNumber, ...assetData } = req.body;
-    console.log('serialNumber extracted:', serialNumber); // Add this line
 
     if (serialNumber) {
       const serialNumberExists = await Asset.findOne({ serialNumber });

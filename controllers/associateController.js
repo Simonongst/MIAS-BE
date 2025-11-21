@@ -12,8 +12,20 @@ const getAllAssociates = async (req, res) => {
 
 const createAssociate = async (req, res) => {
   try {
-    const newAssociate = new Associate(req.body);
-    const savedAssociate = await newAssociate.save();
+    const { eid, ...newAssociate } = req.body;
+
+    if (eid) {
+      const eidExists = await Associate.findOne({ eid });
+      if (eidExists) {
+        return res.json({
+          success: false,
+          message: 'EID already taken.',
+        });
+      }
+    }
+
+    const associateToSave = new Associate({ eid, ...newAssociate });
+    const savedAssociate = await associateToSave.save();
 
     res.status(201).json(savedAssociate);
   } catch (err) {
@@ -36,7 +48,9 @@ const updateAssociate = async (req, res) => {
 
 const deleteAssociate = async (req, res) => {
   try {
-    const deletedAssociate = await Associate.findByIdAndDelete(req.params.associateId);
+    const deletedAssociate = await Associate.findByIdAndDelete(
+      req.params.associateId
+    );
 
     res.status(200).json(deletedAssociate);
   } catch (err) {
@@ -44,4 +58,9 @@ const deleteAssociate = async (req, res) => {
   }
 };
 
-module.exports = { getAllAssociates, createAssociate, deleteAssociate, updateAssociate };
+module.exports = {
+  getAllAssociates,
+  createAssociate,
+  deleteAssociate,
+  updateAssociate,
+};
