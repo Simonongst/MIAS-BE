@@ -14,7 +14,7 @@ const createInvoice = async (req, res) => {
         });
       }
     }
-    const invoiceToSave = new Invoice({ eid, ...newInvoice });
+    const invoiceToSave = new Invoice({ invoiceNumber, ...newInvoice });
 
     const savedInvoice = await invoiceToSave.save();
     res.status(201).json(savedInvoice);
