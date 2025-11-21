@@ -19,9 +19,9 @@ const createInvoice = async (req, res) => {
     const savedInvoice = await invoiceToSave.save();
     res.status(201).json({ success: true, data: savedInvoice });
   } catch (err) {
-    res.status(500).send({ 
+    res.status(500).json({
       success: false,
-      error: err.message 
+      error: err.message,
     });
   }
 };
@@ -57,14 +57,34 @@ const getInvoiceById = async (req, res) => {
 
 const updateInvoice = async (req, res) => {
   try {
+    const { invoiceNumber, ...invoiceData } = req.body;
+
+    if (invoiceNumber) {
+      const invoiceNumberExists = await Invoice.findOne({
+        invoiceNumber,
+        _id: { $ne: req.params.invoiceId },
+      });
+      if (invoiceNumberExists) {
+        return res.status(200).json({
+          success: false,
+          message: 'Invoice Number already exists.',
+        });
+      }
+    }
+
+    const updateData = {
+      ...invoiceData,
+      ...(invoiceNumber && { invoiceNumber }),
+    };
+
     const updatedInvoice = await Invoice.findByIdAndUpdate(
       req.params.invoiceId,
-      req.body,
+      updateData,
       { new: true }
     );
-    res.status(200).json(updatedInvoice);
+    res.status(200).json({ success: true, data: updatedInvoice });
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
