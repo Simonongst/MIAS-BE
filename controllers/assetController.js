@@ -114,6 +114,11 @@ const updateAsset = async (req, res) => {
       return res.status(404).json({ error: 'Asset not found' });
     }
 
+
+    if (oldAsset.owner !== owner) {
+      assetData.acknowledgement = "Pending"
+    }
+
     const updateData = { ...assetData };
 
     // Match owner with associate table by ID
